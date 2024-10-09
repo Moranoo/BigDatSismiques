@@ -56,8 +56,12 @@ conn.commit()
 print("Données sismiques insérées avec succès dans la table Hive.")
 
 # vérification des données insérées
-cursor.execute("SELECT * FROM earthquake")
-print(cursor.fetchall(), cursor.rowcount)
+cursor.execute("SELECT * FROM earthquake LIMIT 5")
+print(cursor.fetchall())
+
+# vérification du nombre de lignes dans la table
+cursor.execute("SELECT COUNT(*) FROM earthquake")
+print(cursor.fetchone()[0])
 
 # fermerture du curseur et de la connexion
 cursor.close()
