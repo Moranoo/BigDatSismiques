@@ -11,7 +11,10 @@ producer = KafkaProducer(
 )
 
 class SismiqueSchema(Schema):
-#  mettre les colonnes du schéma sismique ici
+    date = fields.Str(required=True)
+    secousse = fields.Bool(required=True)
+    magnitude = fields.Float(required=True)
+    tension = fields.Float(required=True)
 
 
 sismique_schema = SismiqueSchema()
