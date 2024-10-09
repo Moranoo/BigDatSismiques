@@ -19,7 +19,7 @@ df = df.withColumnRenamed("tension entre plaque", "tension")
 df.show()
 
 # vérifier le nombre de lignes
-print(f"Nombre de lignes: {df.count()}")
+print(f"Nombre de lignes dans le csv: {df.count()}")
 
 # informations de connexion bdd hive
 conn = hive.Connection(
@@ -53,16 +53,15 @@ for row in df.collect():
 
 conn.commit()
 
+print("Données sismiques insérées avec succès dans la table Hive.")
+
+# vérification des données insérées
+cursor.execute("SELECT * FROM earthquake")
+print(cursor.fetchall(), cursor.rowcount)
+
 # fermerture du curseur et de la connexion
 cursor.close()
 conn.close()
 
-print("Données sismiques insérées avec succès dans la table Hive.")
-
-# affichage des données et du nb de lignes dans hive après insertion
-cursor = conn.cursor()
-cursor.execute("SELECT * FROM earthquake")
-
-print(cursor.fetchall(), cursor.rowcount)
-
+# fermeture de la session Spark
 spark.stop()
