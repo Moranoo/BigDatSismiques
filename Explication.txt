@@ -1,0 +1,29 @@
+Le but d'analyser des données sismiques provenant de deux ensembles de données : l'un contenant des informations globales sur les séismes et l'autre détaillant les séismes par ville. Voici les principales étapes du code, la logique de traitement et les résultats attendus :
+
+1. Configuration et Connexion à Hive
+Configuration des paramètres de connexion à Hive : Définition de l'hôte, du port et du nom de la base de données.
+Création de la session Spark : Spark est utilisé pour lire et manipuler les données. La session est configurée pour prendre en charge Hive, facilitant ainsi l'interaction avec la base de données Hive.
+Connexion à la base de données Hive : Utilisation de pyhive pour se connecter à Hive et exécuter des requêtes SQL.
+2. Chargement et Préparation des Données
+Lecture des données CSV : Les fichiers dataset_sismique.csv et dataset_sismique_villes.csv sont chargés dans des DataFrames Spark.
+Renommage des colonnes : Les colonnes sont renommées pour éviter les espaces et assurer une meilleure lisibilité.
+Affichage des données : Les données sont affichées pour vérifier le bon chargement des datasets.
+3. Création des Tables Hive
+Création des tables earthquake et earthquake_cities : Si les tables n'existent pas encore dans Hive, elles sont créées pour stocker les données des deux datasets.
+Insertion conditionnelle des données : La fonction insert_data_if_empty vérifie si les tables Hive contiennent déjà des données. Si elles sont vides, les données des DataFrames sont insérées.
+4. Analyse des Données
+Exécution d'une analyse sismique détaillée : La fonction run_analysis est conçue pour réaliser plusieurs analyses sur les données. Elle est exécutée séparément pour chaque table (avec ou sans ville).
+
+Calcul de l'amplitude des signaux : L'amplitude (magnitude * tension) est calculée pour chaque ligne, ce qui permet de quantifier l'intensité des secousses.
+Identification des périodes d'activité intense : Les événements sismiques avec une amplitude supérieure à un seuil (5.0) sont filtrés et affichés.
+Calcul de la corrélation entre magnitude et tension : Cette étape mesure la relation entre la magnitude et la tension, pour identifier si les séismes plus puissants sont liés à des tensions plus élevées.
+Identification des précurseurs : En utilisant des fenêtres (partitions) temporelles, on identifie si certains séismes peuvent être des précurseurs d'événements plus importants, en regardant la magnitude suivante.
+Agrégations par jour, heure et minute : Cette étape regroupe les données pour calculer la moyenne des magnitudes par créneau horaire précis, permettant de repérer des tendances horaires plus fines. Si la ville est disponible, l'agrégation est faite par ville en plus de l'horodatage.
+5. Nettoyage des Ressources
+Fermeture des connexions et de la session Spark : Pour libérer les ressources, les connexions à Hive et la session Spark sont fermées à la fin de l'exécution.
+Résultats Attendus
+Affichage des Données Chargées : Une vérification visuelle de chaque DataFrame au début pour s'assurer que les données ont été correctement importées.
+Périodes d'Activité Intense : Une liste des événements sismiques les plus importants, identifiés par leur amplitude.
+Corrélations entre Magnitude et Tension : Une valeur de corrélation pour chaque table, indiquant dans quelle mesure les deux variables sont liées.
+Précurseurs Potentiels : Une table avec les séismes, incluant la magnitude de l'événement suivant, pour repérer les signes annonciateurs de secousses plus fortes.
+Tendances et Agrégations par Jour, Heure et Minute : Des moyennes de magnitudes par créneau temporel et par ville, permettant de repérer des schémas plus précis dans le temps.

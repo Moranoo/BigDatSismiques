@@ -1,22 +1,31 @@
 from kafka import KafkaProducer
-from time import sleep
 import json
-import random
-from datetime import datetime
+import pandas as pd
+import time
 
-producer = KafkaProducer(bootstrap_servers='kafka:9092',
-                         value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+file_path = '/data/dataset_sismique.csv'
+data = pd.read_csv(file_path)
 
-def generate_data():
-    return {
-        'sensor_id': random.randint(1, 100),
-        'temperature': random.uniform(20.0, 30.0),
-        'humidity': random.uniform(30.0, 60.0),
-        'timestamp': datetime.utcnow().isoformat()
-    }
+producer = KafkaProducer(
+    bootstrap_servers='kafka:9092',
+    value_serializer=lambda v: json.dumps(v).encode('utf-8')
+)
 
-while True:
-    data = generate_data()
-    producer.send('topic1', data)
-    print(f"Sent data: {data}")
-    sleep(2)
+topic_name = 'topic1'
+
+try:
+    while True:
+        for index, row in data.iterrows():
+            message = {
+                "timestamp": row['date'],
+                "secousse": row['secousse'],
+                "magnitude": row['magnitude'],
+                "tension_entre_plaque": row['tension entre plaque']
+            }
+            producer.send(topic_name, value=message)
+            print(f"Sent: {message}")
+            time.sleep(1)
+except KeyboardInterrupt:
+    print("Stopping producer...")
+
+producer.close()
