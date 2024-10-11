@@ -27,3 +27,22 @@ Périodes d'Activité Intense : Une liste des événements sismiques les plus im
 Corrélations entre Magnitude et Tension : Une valeur de corrélation pour chaque table, indiquant dans quelle mesure les deux variables sont liées.
 Précurseurs Potentiels : Une table avec les séismes, incluant la magnitude de l'événement suivant, pour repérer les signes annonciateurs de secousses plus fortes.
 Tendances et Agrégations par Jour, Heure et Minute : Des moyennes de magnitudes par créneau temporel et par ville, permettant de repérer des schémas plus précis dans le temps.
+
+
+pour la partie 7 
+il faut Configurez Kafka et Zookeeper dans docker-compose.yml
+Configurez Spark pour consommer les données depuis Kafka
+Exécutez Docker Compose
+vérifier si Kafka et opé 
+docker logs kafka
+docker logs zookeeper
+
+Créez le Topic Kafka --> docker exec -it kafka /bin/bash
+Ensuite, dans le conteneur Kafka--->kafka-topics.sh --create --topic seismic-data --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+Envoyez des Données au Topic Kafka---->kafka-console-producer.sh --topic seismic-data --bootstrap-server localhost:9092
+
+Ensuite, tapez quelques messages au format JSON ----> {"timestamp": "2024-10-11T10:00:00Z", "magnitude": "5.2", "location": "California"}
+
+
+Exécutez le Script Spark -----> docker exec -it spark-master /bin/bash
+exécuter le script en consommant des données depuis Kafka ----> /spark/bin/spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1 spark_streaming.py
